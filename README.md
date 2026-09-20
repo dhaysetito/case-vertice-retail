@@ -82,7 +82,7 @@ Para encerrar a aplicação, pressione `Ctrl + C` nos dois terminais.
 |---|---|
 | **Saúde do negócio** | Exibe os cinco KPIs executivos, filtros temporais e comparações por canal e categoria. |
 | **Evolução e tendências** | Permite alternar entre os cinco KPIs no tempo, comparar o período anterior e respeitar intervalos anuais, trimestrais, mensais e semanais. |
-| **Alertas prioritários** | Exibe sinais candidatos e os critérios que ainda precisam ser calibrados antes da publicação de alertas. |
+| **Alertas prioritários** | Detecta quedas relevantes dos cinco KPIs contra o período anterior, explica o limiar e direciona para a tendência correspondente. |
 | **Oportunidades** | Demonstra a transformação de uma evidência validada em oportunidade de investigação priorizável. |
 | **Plano de ação** | Apresenta um plano ilustrativo conectado à hipótese, evidência e KPI que se pretende modificar. |
 | **Resultado das ações** | Exibe o estado sem resultados reais e permite abrir uma simulação explicitamente identificada. |
@@ -92,7 +92,7 @@ Para encerrar a aplicação, pressione `Ctrl + C` nos dois terminais.
 
 | Seção ou funcionalidade | O que falta |
 |---|---|
-| **Alertas prioritários** | Implementar regras calibradas de magnitude, persistência, recorrência e materialidade. |
+| **Alertas prioritários** | Calibrar persistência, recorrência, amostra mínima e materialidade financeira com usuários. |
 | **Ranking de oportunidades** | Implementar avaliação e score documentado de impacto, esforço, risco, velocidade e confiança. |
 | **Plano de ação** | Adicionar criação, edição, responsável, prazo, status e persistência das ações. |
 | **Resultado das ações** | Conectar intervenções reais, baseline, meta, período de acompanhamento e impacto observado. |
