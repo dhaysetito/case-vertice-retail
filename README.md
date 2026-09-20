@@ -1,53 +1,153 @@
 # Vértice Retail — Dashboard Executivo Inteligente
 
-Estado: **visual aprovado inicialmente; dados tratados e conectados ao protótipo. Aplicação completa ainda em desenvolvimento por etapas**.
+Dashboard executivo orientado à decisão para acompanhar a saúde do negócio, investigar desvios, priorizar oportunidades e conectar análises a ações mensuráveis.
 
-**[Abrir protótipo visual do dashboard](docs/prototipo/index.html)** — seções independentes, gráficos com dados de 2023, filtros de período/canal/categoria e detalhes em painel lateral. Funciona localmente, sem servidor ou dependências externas. É um protótipo de apresentação; IA, execução de ações e geração de relatórios não estão implementadas.
+O projeto utiliza dados históricos de 2023 e mantém a cadeia de rastreabilidade:
 
-O produto conecta monitoramento, investigação, priorização, decisão, ação e mensuração. A IA atua transversalmente, com evidências e limitações explícitas. O relatório semanal é uma saída da mesma camada analítica do dashboard.
+```text
+Hipótese → KPI → Evidência → Alerta → Oportunidade → Ação → Resultado
+```
 
-## Documentação inicial do escopo
+## Requisitos
 
-1. [Escopo consolidado e decisões](docs/01-escopo.md)
-2. [Fontes, backup, auditoria e contrato de métricas](docs/02-dados-e-kpis.md)
-3. [Arquitetura funcional, telas e navegação](docs/03-arquitetura-funcional.md)
-4. [Arquitetura técnica sugerida](docs/04-arquitetura-tecnica.md)
-5. [Modelo conceitual e rastreabilidade](docs/05-modelo-dominio.md)
-6. [Alertas, oportunidades, ranking e mensuração](docs/06-regras-decisao.md)
-7. [IA contextual e relatório executivo](docs/07-ia-e-relatorio.md)
-8. [Plano de 90 dias, riscos e critérios de aceite](docs/08-plano-e-riscos.md)
-9. [Wireframes e jornada H02](docs/09-wireframes-e-jornada.md) — [abrir desenho navegável](docs/wireframes.html)
-10. [Contrato inicial e calibração pendente](docs/10-contrato-inicial-e-calibracao.md)
-11. [Protótipo visual e interações](docs/11-prototipo-visual.md)
-12. [Preparação de dados executada](docs/12-preparacao-dados.md)
-13. [API analítica inicial](docs/13-api-analitica.md)
+- Python 3 instalado e disponível no terminal como `python`.
+- Diretório `Data` na raiz do projeto com estes cinco arquivos atualizados:
+  - `atendimento.csv`
+  - `clientes.csv`
+  - `estoque.csv`
+  - `marketing.csv`
+  - `vendas.csv`
 
-## Dados preservados
+A aplicação atual não exige a instalação de pacotes externos.
 
-- `Data/`: cinco CSVs originais do projeto, **não modificar**.
-- `backups/20260919T231914609851Z/projeto_Data/`: um único conjunto de backup dos cinco CSVs de `Data`.
-- `data_work/20260919T231914609851Z/`: cópia de entrada usada pelo tratamento, preservada e ainda idêntica aos originais.
-- `data_processed/limpeza-v1-2d6da7f3e091/`: cinco bases tratadas, quarentena, sinalizações de qualidade, elegibilidade e manifesto. O protótipo agora lê os agregados produzidos dessa versão.
-- [Manifesto de backup](docs/evidencias/backup-manifest.json): origem, destino, tamanho e SHA-256 dos cinco arquivos preservados no backup.
-- [Perfil dos CSVs](docs/evidencias/perfil-dados.json): leitura dos arquivos, estrutura, datas, nulos, relacionamentos e reconciliação financeira.
+## Preparar os dados
 
-O backup é local, no mesmo ambiente de armazenamento; protege contra alterações de trabalho, mas não equivale a uma cópia externa de recuperação de desastre. Nenhum arquivo foi enviado ao GitHub. Dados e cópias locais estão no `.gitignore`.
+Na primeira execução, abra o PowerShell na raiz do projeto:
 
-## O que foi executado nesta etapa
+```powershell
+cd "caminho\para\case-vertice-retail"
+```
 
-Leitura do case, backup verificado, documentação, protótipo visual e limpeza conservadora concluídos. Dois registros truncados foram segregados; os valores válidos foram preservados. Oito testes de integridade passaram. Originais, backup e cópia de entrada permanecem intactos. Não foram instaladas dependências ou implementadas APIs nesta etapa.
+Execute os comandos abaixo na ordem apresentada:
 
-Para reproduzir o tratamento e atualizar os dados do protótipo, executar `python tools/preparar_dados.py` e depois `python tools/preparar_dados_prototipo.py`. A primeira execução publica uma versão tratada; reexecuções com as mesmas fontes reutilizam a versão sem criar novos backups. Testes: `python -m unittest discover -s tests -v`.
+```powershell
+python tools/auditar_fontes.py
+python tools/preparar_dados.py
+python tools/preparar_dados_prototipo.py
+```
 
-O utilitário `tools/auditar_fontes.py` reproduz a auditoria documental com Python e pandas já disponíveis no ambiente. Executá-lo novamente cria outro conjunto datado de cópias e atualiza os relatórios JSON; não é o futuro pipeline da aplicação. O manifesto de cada execução também fica guardado em seu backup.
+Esses comandos validam os cinco CSVs e geram localmente os dados utilizados pela API e pelo dashboard. Os arquivos fornecidos no diretório `Data` não são alterados.
 
-## Convenção de evidência
+## Rodar a aplicação
 
-- **[CASE]**: orientação do enunciado original.
-- **[REQ]**: requisito explícito do grupo, consolidado nesta documentação.
-- **[DADO]**: resultado verificado nos CSVs ou conclusão identificada de estudo existente.
-- **[PRODUTO]**: escolha proposta de experiência, arquitetura ou regra operacional.
-- **[INFERÊNCIA]**: explicação plausível ainda não demonstrada.
-- **[PENDENTE]**: parâmetro ou dependência sem definição suficiente; não é um fato.
+A aplicação utiliza dois processos locais: a API analítica e o servidor do dashboard.
 
-O escopo funcional está delimitado. Limiares, pesos de priorização, credenciais de IA e ambiente de hospedagem continuam explicitamente pendentes; isso não autoriza inventá-los.
+### 1. Iniciar a API
+
+No primeiro terminal, na raiz do projeto, execute:
+
+```powershell
+python -m app.server
+```
+
+Saída esperada:
+
+```text
+API analítica: http://127.0.0.1:8765
+```
+
+Para confirmar que a API está funcionando, abra:
+
+[http://127.0.0.1:8765/api/health](http://127.0.0.1:8765/api/health)
+
+### 2. Iniciar o dashboard
+
+Mantenha a API aberta. No segundo terminal, também na raiz do projeto, execute:
+
+```powershell
+python -m http.server 8000 --directory docs/prototipo
+```
+
+Acesse a aplicação em:
+
+[http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+Quando a conexão estiver correta, o dashboard mostrará **“API conectada — dados tratados”**. O aviso `GET /favicon.ico 404` no terminal é inofensivo.
+
+Para encerrar a aplicação, pressione `Ctrl + C` nos dois terminais.
+
+## Seções implementadas
+
+| Seção | Estado atual |
+|---|---|
+| **Saúde do negócio** | Exibe os cinco KPIs executivos, filtros temporais e comparações por canal e categoria. |
+| **Evolução e tendências** | Apresenta receita e margem no tempo, respeitando intervalos anuais, trimestrais, mensais e semanais. |
+| **Alertas prioritários** | Exibe sinais candidatos e os critérios que ainda precisam ser calibrados antes da publicação de alertas. |
+| **Oportunidades** | Demonstra a transformação de uma evidência validada em oportunidade de investigação priorizável. |
+| **Plano de ação** | Apresenta um plano ilustrativo conectado à hipótese, evidência e KPI que se pretende modificar. |
+| **Resultado das ações** | Exibe o estado sem resultados reais e permite abrir uma simulação explicitamente identificada. |
+| **Hipóteses e métricas** | Mantém o catálogo inicial de hipóteses, vereditos, definições de KPIs e limitações analíticas. |
+
+## Seções e funcionalidades a implementar
+
+| Seção ou funcionalidade | O que falta |
+|---|---|
+| **Alertas prioritários** | Implementar regras calibradas de magnitude, persistência, recorrência e materialidade. |
+| **Ranking de oportunidades** | Implementar avaliação e score documentado de impacto, esforço, risco, velocidade e confiança. |
+| **Plano de ação** | Adicionar criação, edição, responsável, prazo, status e persistência das ações. |
+| **Resultado das ações** | Conectar intervenções reais, baseline, meta, período de acompanhamento e impacto observado. |
+| **IA para investigação** | Substituir o roteiro demonstrativo por uma integração contextual com dados, evidências e limitações. |
+| **Relatório executivo semanal** | Gerar automaticamente o relatório a partir da mesma camada analítica utilizada pelo dashboard. |
+| **Governança e acesso** | Implementar autenticação, perfis de acesso, histórico de alterações e trilha de auditoria. |
+| **Integrações** | Adicionar notificações e conexões com sistemas corporativos somente após validação do MVP. |
+
+## Filtros e métricas disponíveis
+
+Filtros globais:
+
+- período;
+- granularidade: ano, trimestre, mês ou semana;
+- comparação com período anterior;
+- canal;
+- categoria.
+
+KPIs disponíveis:
+
+- receita líquida;
+- margem absoluta;
+- margem percentual;
+- pedidos;
+- ticket médio.
+
+## Rotas da API
+
+| Rota | Finalidade |
+|---|---|
+| `/api/health` | KPIs do recorte selecionado. |
+| `/api/trend` | Série temporal dos indicadores. |
+| `/api/channels` | Comparação dos canais de venda. |
+| `/api/categories` | Comparação das categorias. |
+| `/api/evidence` | Evidências descritivas e limitações. |
+| `/api/metadata` | Metadados, dimensões e contratos disponíveis. |
+
+## Testes
+
+Para executar a suíte automatizada:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+A suíte atual possui 17 testes para contratos analíticos, filtros, intervalos, integridade e segurança da preparação dos dados.
+
+## Solução de problemas
+
+- **Dashboard mostra “Dados tratados — offline”**: confirme que a API está aberta em `http://127.0.0.1:8765/api/health`.
+- **`/api/categories` retorna 404**: encerre uma possível API antiga com `Ctrl + C` e inicie novamente `python -m app.server`.
+- **Porta 8765 ocupada**: execute `netstat -ano | Select-String ':8765'` e encerre o terminal antigo da API.
+- **Alterações não aparecem**: reinicie a API e atualize o navegador com `Ctrl + F5`.
+- **Erro ao preparar os dados**: confirme os nomes dos cinco arquivos dentro do diretório `Data`.
+
+## Documentação
+
+A documentação de escopo, arquitetura, métricas, rastreabilidade e plano de implementação está disponível em [`docs/`](docs/).
