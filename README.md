@@ -81,7 +81,7 @@ Para encerrar a aplicação, pressione `Ctrl + C` nos dois terminais.
 | Seção | Estado atual |
 |---|---|
 | **Saúde do negócio** | Exibe os cinco KPIs executivos, filtros temporais e comparações por canal e categoria. |
-| **Evolução e tendências** | Apresenta receita e margem no tempo, respeitando intervalos anuais, trimestrais, mensais e semanais. |
+| **Evolução e tendências** | Permite alternar entre os cinco KPIs no tempo, comparar o período anterior e respeitar intervalos anuais, trimestrais, mensais e semanais. |
 | **Alertas prioritários** | Exibe sinais candidatos e os critérios que ainda precisam ser calibrados antes da publicação de alertas. |
 | **Oportunidades** | Demonstra a transformação de uma evidência validada em oportunidade de investigação priorizável. |
 | **Plano de ação** | Apresenta um plano ilustrativo conectado à hipótese, evidência e KPI que se pretende modificar. |
