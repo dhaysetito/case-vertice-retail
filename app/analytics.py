@@ -127,6 +127,15 @@ class Analytics:
                 cursor = next_cursor
         else:
             months = [query.month] if query.month else list(range(1, 13))
+            if query.start and query.end:
+                interval_start = date.fromisoformat(query.start)
+                interval_end = date.fromisoformat(query.end)
+                months = []
+                for month in range(1, 13):
+                    month_start = date(query.year, month, 1)
+                    month_end = date(query.year + 1, 1, 1) if month == 12 else date(query.year, month + 1, 1)
+                    if month_start < interval_end and month_end > interval_start:
+                        months.append(month)
             for month in months:
                 point_query = Query(query.year, month, query.channel, query.category, query.grain, query.start, query.end)
                 points.append({"month": month, **self._aggregate(self._rows(point_query))})
@@ -135,12 +144,28 @@ class Analytics:
                              "start": query.start, "end": query.end}, "points": points}
 
     def channels(self, query: Query = Query()) -> dict[str, Any]:
-        names = sorted({row["canal"] for row in self._rows(Query(year=query.year, month=query.month, channel=None, category=query.category, grain=query.grain, start=query.start, end=query.end))})
-        total = self._aggregate(self._rows(query))["revenue"]
+        comparison_query = Query(year=query.year, month=query.month, channel=None, category=query.category,
+                                 grain=query.grain, start=query.start, end=query.end)
+        names = sorted({row["canal"] for row in self._rows(comparison_query)})
+        total = self._aggregate(self._rows(comparison_query))["revenue"]
         items = []
         for name in names:
             metrics = self._aggregate(self._rows(Query(year=query.year, month=query.month, channel=name, category=query.category, grain=query.grain, start=query.start, end=query.end)))
             items.append({"channel": name, **metrics, "revenue_share_pct": metrics["revenue"] / total * 100 if total else None})
+        items.sort(key=lambda item: item["revenue"], reverse=True)
+        return {"context": self.context(query), "items": items}
+
+    def categories(self, query: Query = Query()) -> dict[str, Any]:
+        comparison_query = Query(year=query.year, month=query.month, channel=query.channel, category=None,
+                                 grain=query.grain, start=query.start, end=query.end)
+        names = sorted({row["categoria"] for row in self._rows(comparison_query)})
+        total = self._aggregate(self._rows(comparison_query))["revenue"]
+        items = []
+        for name in names:
+            metrics = self._aggregate(self._rows(Query(year=query.year, month=query.month, channel=query.channel,
+                                                        category=name, grain=query.grain, start=query.start, end=query.end)))
+            items.append({"category": name, **metrics,
+                          "revenue_share_pct": metrics["revenue"] / total * 100 if total else None})
         items.sort(key=lambda item: item["revenue"], reverse=True)
         return {"context": self.context(query), "items": items}
 

@@ -32,12 +32,14 @@ class Handler(BaseHTTPRequestHandler):
                 payload = self.analytics.trend(query)
             elif route.path == "/api/channels":
                 payload = self.analytics.channels(query)
+            elif route.path == "/api/categories":
+                payload = self.analytics.categories(query)
             elif route.path == "/api/evidence":
                 payload = self.analytics.evidence(query)
             elif route.path == "/api/metadata":
                 payload = {"snapshot": self.analytics.version, "population": "Aprovado; medidas completas", "year_available": [2023],
                            "grains": ["week", "month", "quarter", "year"], "dimensions": ["channel", "category"],
-                           "endpoints": ["health", "trend", "channels", "evidence"]}
+                           "endpoints": ["health", "trend", "channels", "categories", "evidence"]}
             else:
                 self._json({"error": "rota não encontrada"}, 404)
                 return

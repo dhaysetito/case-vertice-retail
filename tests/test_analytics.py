@@ -21,12 +21,29 @@ class AnalyticsContractTests(unittest.TestCase):
         self.assertEqual(december["month"], 12)
         self.assertGreater(december["orders"], 0)
 
+    def test_quarter_trend_contains_only_selected_months(self):
+        data = self.analytics.trend(Query(grain="quarter", start="2023-04-01", end="2023-07-01"))
+        self.assertEqual([point["month"] for point in data["points"]], [4, 5, 6])
+        self.assertTrue(all(point["orders"] > 0 for point in data["points"]))
+
     def test_channels_have_same_population_and_share(self):
         data = self.analytics.channels()
         self.assertEqual(len(data["items"]), 7)
         self.assertAlmostEqual(sum(item["revenue_share_pct"] for item in data["items"]), 100, places=6)
         marketplace = next(item for item in data["items"] if item["channel"] == "Marketplace")
         self.assertAlmostEqual(marketplace["margin_pct"], 51.518849201, places=6)
+
+    def test_channels_keep_comparison_when_one_channel_is_selected(self):
+        data = self.analytics.channels(Query(channel="Marketplace"))
+        self.assertEqual(len(data["items"]), 7)
+        self.assertAlmostEqual(sum(item["revenue_share_pct"] for item in data["items"]), 100, places=6)
+        self.assertEqual(data["context"]["channel"], "Marketplace")
+
+    def test_categories_compare_all_values_and_respect_channel(self):
+        data = self.analytics.categories(Query(channel="Marketplace", category="Beleza"))
+        self.assertEqual(len(data["items"]), 4)
+        self.assertAlmostEqual(sum(item["revenue_share_pct"] for item in data["items"]), 100, places=6)
+        self.assertEqual(data["context"]["category"], "Beleza")
 
     def test_filters_are_composable(self):
         marketplace = self.analytics.health(Query(channel="Marketplace"))
