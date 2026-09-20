@@ -19,3 +19,4 @@
  body[data-section="saude"] footer{padding:13px 0}
 }
 .panel-select{display:flex;align-items:center;margin-left:4px;font-size:0;flex:0 0 34px}.panel-select select{min-width:34px;width:34px;height:28px;border:0;border-radius:6px;background:transparent;color:#168f88;padding:2px 0;font:inherit;letter-spacing:0;text-transform:none;font-weight:600;box-shadow:none;cursor:pointer;overflow:visible}.panel-select select:focus{outline:2px solid #b9e2dc;outline-offset:2px}.panel-select option{font-size:13px;color:#263750;background:#fff}
+.insight-svg{display:block;width:25px;height:25px}.insight-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;flex:0 0 38px}.insight-icon.teal{background:#e8f7f4}

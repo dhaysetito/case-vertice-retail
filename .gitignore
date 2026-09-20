@@ -1,5 +1,6 @@
 # Fontes e copias locais: preservar no disco, nao incluir por acidente em commits.
 /Data/
+/Data.zip
 /backups/
 /data_work/
 /data_processed/
