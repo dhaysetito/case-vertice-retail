@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import csv
 import json
+from datetime import date, timedelta
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
@@ -34,6 +35,9 @@ class Query:
     month: int | None = None
     channel: str | None = None
     category: str | None = None
+    grain: str = "month"
+    start: str | None = None
+    end: str | None = None
 
 
 class Analytics:
@@ -64,6 +68,8 @@ class Analytics:
     def _rows(self, query: Query, approved_only: bool = True) -> list[dict[str, str]]:
         if query.year != 2023:
             raise ValueError("ano disponível no snapshot atual: 2023")
+        if query.grain not in {"week", "month", "quarter", "year"}:
+            raise ValueError("grain deve ser week, month, quarter ou year")
         if query.channel and query.channel not in self.available_channels:
             raise ValueError(f"canal não disponível: {query.channel}")
         if query.category and query.category not in self.available_categories:
@@ -73,7 +79,11 @@ class Analytics:
             if approved_only and row["status_pagamento"] != "Aprovado":
                 continue
             date = self._date(row)
-            if not date.startswith(f"{query.year:04d}-"):
+            if query.start and date < query.start:
+                continue
+            if query.end and date >= query.end:
+                continue
+            if not query.start and not date.startswith(f"{query.year:04d}-"):
                 continue
             if query.month is not None and int(date[5:7]) != query.month:
                 continue
@@ -98,6 +108,7 @@ class Analytics:
         rows = self._rows(query)
         return {"snapshot": self.version, "population": "Aprovado; medidas completas", "year": query.year,
                 "month": query.month, "channel": query.channel, "category": query.category,
+                "grain": query.grain, "start": query.start, "end": query.end,
                 "metrics": self._aggregate(rows)}
 
     def health(self, query: Query = Query()) -> dict[str, Any]:
@@ -105,26 +116,37 @@ class Analytics:
 
     def trend(self, query: Query = Query()) -> dict[str, Any]:
         points = []
-        months = [query.month] if query.month else list(range(1, 13))
-        for month in months:
-            point_query = Query(query.year, month, query.channel, query.category)
-            points.append({"month": month, **self._aggregate(self._rows(point_query))})
+        if query.grain == "week":
+            start = date.fromisoformat(query.start or "2023-01-02")
+            end = date.fromisoformat(query.end or "2024-01-01")
+            cursor = start - timedelta(days=start.weekday())
+            while cursor < end:
+                next_cursor = cursor + timedelta(days=7)
+                point_query = Query(query.year, None, query.channel, query.category, "week", cursor.isoformat(), next_cursor.isoformat())
+                points.append({"period": cursor.isoformat(), "label": f"S{cursor.isocalendar().week:02d}", **self._aggregate(self._rows(point_query))})
+                cursor = next_cursor
+        else:
+            months = [query.month] if query.month else list(range(1, 13))
+            for month in months:
+                point_query = Query(query.year, month, query.channel, query.category, query.grain, query.start, query.end)
+                points.append({"month": month, **self._aggregate(self._rows(point_query))})
         return {"context": {"snapshot": self.version, "population": "Aprovado; medidas completas", "year": query.year,
-                             "channel": query.channel, "category": query.category}, "points": points}
+                             "channel": query.channel, "category": query.category, "grain": query.grain,
+                             "start": query.start, "end": query.end}, "points": points}
 
     def channels(self, query: Query = Query()) -> dict[str, Any]:
-        names = sorted({row["canal"] for row in self._rows(Query(query.year, query.month, None, query.category))})
+        names = sorted({row["canal"] for row in self._rows(Query(year=query.year, month=query.month, channel=None, category=query.category, grain=query.grain, start=query.start, end=query.end))})
         total = self._aggregate(self._rows(query))["revenue"]
         items = []
         for name in names:
-            metrics = self._aggregate(self._rows(Query(query.year, query.month, name, query.category)))
+            metrics = self._aggregate(self._rows(Query(year=query.year, month=query.month, channel=name, category=query.category, grain=query.grain, start=query.start, end=query.end)))
             items.append({"channel": name, **metrics, "revenue_share_pct": metrics["revenue"] / total * 100 if total else None})
         items.sort(key=lambda item: item["revenue"], reverse=True)
         return {"context": self.context(query), "items": items}
 
     def evidence(self, query: Query = Query()) -> dict[str, Any]:
         aggregate = self._aggregate(self._rows(query))
-        benchmark = self._aggregate(self._rows(Query(query.year, query.month, None, query.category)))
+        benchmark = self._aggregate(self._rows(Query(year=query.year, month=query.month, channel=None, category=query.category, grain=query.grain, start=query.start, end=query.end)))
         return {"type": "descriptive", "context": self.context(query), "benchmark_margin_pct": benchmark["margin_pct"],
                 "gap_margin_pp": aggregate["margin_pct"] - benchmark["margin_pct"] if aggregate["margin_pct"] is not None and benchmark["margin_pct"] is not None else None,
                 "limitations": ["margem disponível não inclui comissões, impostos e outros custos econômicos", "gap diagnóstico não é saving", "observação não demonstra causalidade"]}
@@ -136,4 +158,16 @@ def query_from_params(params: dict[str, str]) -> Query:
     month_int = int(month) if month not in (None, "", "all") else None
     if month_int is not None and month_int not in range(1, 13):
         raise ValueError("month deve estar entre 1 e 12")
-    return Query(year=year, month=month_int, channel=params.get("channel") or None, category=params.get("category") or None)
+    grain = params.get("grain", "month")
+    if grain not in {"week", "month", "quarter", "year"}:
+        raise ValueError("grain deve ser week, month, quarter ou year")
+    start = params.get("start") or None
+    end = params.get("end") or None
+    if start:
+        date.fromisoformat(start)
+    if end:
+        date.fromisoformat(end)
+    if start and end and start >= end:
+        raise ValueError("start deve ser anterior a end")
+    return Query(year=year, month=month_int, channel=params.get("channel") or None, category=params.get("category") or None,
+                 grain=grain, start=start, end=end)

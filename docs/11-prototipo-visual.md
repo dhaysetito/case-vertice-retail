@@ -25,6 +25,6 @@ Gráfico temporal: barras de receita no eixo esquerdo; linha de margem % no eixo
 
 Oportunidade e plano H02 são rascunhos globais com sua evidência de referência, não entidades reescritas pelos filtros. Resultados fictícios são isolados e explicitamente identificados. O relatório exibe apenas sua estrutura; não transforma números anuais em semanais. Nenhum texto demonstrativo deve ser tratado como resposta real de LLM.
 
-O protótipo não implementa backend, persistência de ações, IA, envio de relatórios ou regras operacionais calibradas. O tratamento conservador dos dados foi implementado em etapa própria após a aprovação visual. SKU e outros domínios não têm filtros neste recorte visual. O cadastro de hipóteses preserva os vereditos anteriores.
+O protótipo agora tenta consultar a API analítica em `http://127.0.0.1:8765` para saúde, tendências e canais. Se a API não estiver disponível, mantém o fallback offline com os mesmos agregados tratados e exibe o estado “Dados tratados · offline”. Persistência de ações, IA, envio de relatórios e regras operacionais calibradas continuam fora desta fatia. SKU e outros domínios não têm filtros neste recorte visual. O cadastro de hipóteses preserva os vereditos anteriores.
 
 Arquivos: `index.html` (estrutura), `visual.css` (design), `dashboard.js` (interações locais), `dados.js` (agregados históricos).

@@ -29,15 +29,27 @@ df = df[df.status_pagamento.eq('Aprovado')].copy()
 df['date'] = pd.to_datetime(df.data_pedido)
 df = df[df.date.ge('2023-01-01') & df.date.lt('2024-01-01')].copy()
 df['month'] = df.date.dt.month
+df['week_start'] = df.date - pd.to_timedelta(df.date.dt.weekday, unit='D')
+df['week'] = df.date.dt.isocalendar().week.astype(int)
 df['margin'] = df.receita_liquida - df.custo_produto - df.custo_frete
 rows = df.groupby(['month', 'canal', 'categoria']).agg(
+    revenue=('receita_liquida', 'sum'), margin=('margin', 'sum'), orders=('order_id', 'nunique'),
+    product=('custo_produto', 'sum'), freight=('custo_frete', 'sum'),
+    discount=('desconto_reais', 'sum'), gross=('receita_bruta', 'sum')).reset_index()
+weekly_rows = df.groupby(['week', 'week_start', 'canal', 'categoria']).agg(
+    revenue=('receita_liquida', 'sum'), margin=('margin', 'sum'), orders=('order_id', 'nunique'),
+    product=('custo_produto', 'sum'), freight=('custo_frete', 'sum'),
+    discount=('desconto_reais', 'sum'), gross=('receita_bruta', 'sum')).reset_index()
+daily_rows = df.groupby(['date', 'canal', 'categoria']).agg(
     revenue=('receita_liquida', 'sum'), margin=('margin', 'sum'), orders=('order_id', 'nunique'),
     product=('custo_produto', 'sum'), freight=('custo_frete', 'sum'),
     discount=('desconto_reais', 'sum'), gross=('receita_bruta', 'sum')).reset_index()
 payload = {'source_sha256': manifest['inputs']['vendas']['sha256'],
            'processed_snapshot': pointer['snapshot'], 'processed_sha256': expected_hash, 'year': 2023,
            'channels': sorted(df.canal.unique().tolist()), 'categories': sorted(df.categoria.unique().tolist()),
-           'rows': json.loads(rows.to_json(orient='records', force_ascii=False, double_precision=10))}
+           'rows': json.loads(rows.to_json(orient='records', force_ascii=False, double_precision=10)),
+           'weekly_rows': json.loads(weekly_rows.to_json(orient='records', date_format='iso', force_ascii=False, double_precision=10)),
+           'daily_rows': json.loads(daily_rows.to_json(orient='records', date_format='iso', force_ascii=False, double_precision=10))}
 target = root / 'docs/prototipo'
 target.mkdir(exist_ok=True)
 (target / 'dados.js').write_text('window.VERTICE_DATA = ' + json.dumps(payload, ensure_ascii=False) + ';\n', encoding='utf-8')

@@ -41,7 +41,7 @@ As respostas carregam `snapshot`, `population`, contexto temporal e filtros. KPI
 
 ## Relação com a interface
 
-O protótipo visual aprovado ainda contém uma cópia local de seus agregados para funcionar sem servidor. A próxima tarefa de implementação é trocar essa fonte por chamadas a estas rotas, mantendo a mesma aparência e os estados de erro/carregamento. Até essa troca, o protótipo continua offline e estável para apresentação.
+O protótipo visual aprovado tenta chamar estas rotas para cards, série e canais quando a API estiver ativa. A cópia local continua como fallback para apresentação offline; o indicador no filtro mostra “API conectada · dados tratados” ou “Dados tratados · offline”. Detalhes ainda podem usar o agregado local enquanto a persistência completa não existe.
 
 ## Verificação
 
