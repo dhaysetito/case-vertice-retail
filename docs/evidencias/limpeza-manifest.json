@@ -1,0 +1,64 @@
+{
+  "snapshot": "limpeza-v1-2d6da7f3e091",
+  "pipeline_version": "limpeza-v1",
+  "inputs": {
+    "vendas": {
+      "working_copy": "data_work\\20260919T231914609851Z\\vendas.csv",
+      "sha256": "0199d2f3e06067985a658ab51e50568867ae2df97f65c98d1954ce3a9151cc62"
+    },
+    "clientes": {
+      "working_copy": "data_work\\20260919T231914609851Z\\clientes.csv",
+      "sha256": "5fa93aeaaa68c31d2cb8ac1ef159167b10d7bbcd032b2814d10151fa5e36a8eb"
+    },
+    "estoque": {
+      "working_copy": "data_work\\20260919T231914609851Z\\estoque.csv",
+      "sha256": "d41b4de73bb3d85b14baca4e2d87053b377fb5e09d72f2013d2dbbc32f198b34"
+    },
+    "marketing": {
+      "working_copy": "data_work\\20260919T231914609851Z\\marketing.csv",
+      "sha256": "45d7e7ff44967d3d2985f3d9c1dfb4e378416b70817ab595349aa410d5f60cce"
+    },
+    "atendimento": {
+      "working_copy": "data_work\\20260919T231914609851Z\\atendimento.csv",
+      "sha256": "a61a52929e72a706b922267315b26affa594e73fa233ae94c93a151f72cdfaab"
+    }
+  },
+  "outputs": {
+    "vendas.csv": {
+      "sha256": "e7901c562ede1e4aeb5f5056cbc0410e727c4ea0bd7434c1916a024745cc013c",
+      "bytes": 5226415
+    },
+    "clientes.csv": {
+      "sha256": "5fa93aeaaa68c31d2cb8ac1ef159167b10d7bbcd032b2814d10151fa5e36a8eb",
+      "bytes": 1683441
+    },
+    "estoque.csv": {
+      "sha256": "d41b4de73bb3d85b14baca4e2d87053b377fb5e09d72f2013d2dbbc32f198b34",
+      "bytes": 637612
+    },
+    "marketing.csv": {
+      "sha256": "45d7e7ff44967d3d2985f3d9c1dfb4e378416b70817ab595349aa410d5f60cce",
+      "bytes": 505395
+    },
+    "atendimento.csv": {
+      "sha256": "9630749b1c9c0548571fcc8a0bc342a251d568abe18c7d3380a3425f9def645c",
+      "bytes": 6288809
+    },
+    "quarentena.jsonl": {
+      "sha256": "c21c751827da185e59212db1ab949a6b73246b26895d7ab28cea11f5e32ca7c0",
+      "bytes": 656
+    },
+    "qualidade_flags.csv": {
+      "sha256": "d976ab932b69f9517af4d81d61bcfc0a8228f85574a727704d25a5dc2fefc69e",
+      "bytes": 4171992
+    },
+    "vendas_elegibilidade.csv": {
+      "sha256": "5ffba0f4c093cf940eb1aebb5424dbdc56cd8f3c37d5c070cda6d5523feecd78",
+      "bytes": 886145
+    },
+    "resumo.json": {
+      "sha256": "0c99fcea1b88765ba4318381f34551374b99af4f7c8cd8290bb5085585a0a2e8",
+      "bytes": 2767
+    }
+  }
+}

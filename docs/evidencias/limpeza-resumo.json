@@ -1,0 +1,117 @@
+{
+  "snapshot": "limpeza-v1-2d6da7f3e091",
+  "pipeline_version": "limpeza-v1",
+  "sources_verified": 15,
+  "datasets": {
+    "vendas": {
+      "input_rows": 27759,
+      "output_rows": 27758,
+      "quarantined_rows": 1,
+      "columns": 20
+    },
+    "clientes": {
+      "input_rows": 15000,
+      "output_rows": 15000,
+      "quarantined_rows": 0,
+      "columns": 14
+    },
+    "estoque": {
+      "input_rows": 5000,
+      "output_rows": 5000,
+      "quarantined_rows": 0,
+      "columns": 16
+    },
+    "marketing": {
+      "input_rows": 3500,
+      "output_rows": 3500,
+      "quarantined_rows": 0,
+      "columns": 15
+    },
+    "atendimento": {
+      "input_rows": 35841,
+      "output_rows": 35840,
+      "quarantined_rows": 1,
+      "columns": 12
+    }
+  },
+  "flags": {
+    "fechamento_provavel_sentinela": 8974,
+    "margem_negativa": 491,
+    "pedido_sem_correspondencia": 23436,
+    "ticket_antes_pedido": 1688,
+    "venda_antes_cadastro": 8464
+  },
+  "sales_status": {
+    "Aprovado": 24454,
+    "Aguardando": 1097,
+    "Cancelado": 2207
+  },
+  "coverage": {
+    "vendas": {
+      "data_pedido": {
+        "min": "2023-01-01 00:05:25",
+        "max": "2024-01-26 10:53:49"
+      }
+    },
+    "clientes": {
+      "data_nascimento": {
+        "min": "1985-01-01",
+        "max": "2006-12-27"
+      },
+      "data_cadastro": {
+        "min": "2020-01-01",
+        "max": "2025-12-28"
+      }
+    },
+    "estoque": {
+      "data_ultima_entrada": {
+        "min": "2023-01-01",
+        "max": "2025-12-28"
+      }
+    },
+    "marketing": {
+      "data_inicio": {
+        "min": "2023-01-01",
+        "max": "2025-12-28"
+      },
+      "data_fim": {
+        "min": "2023-01-16",
+        "max": "2025-12-31"
+      }
+    },
+    "atendimento": {
+      "data_abertura": {
+        "min": "2023-01-01 07:54:47",
+        "max": "2025-12-31 21:11:32"
+      },
+      "data_fechamento": {
+        "min": "2023-01-01 17:54:05",
+        "max": "2025-12-31 23:59:00"
+      }
+    }
+  },
+  "metrics": {
+    "all_complete": {
+      "orders": 27758,
+      "revenue": "18889334.01",
+      "margin": "10270436.65",
+      "margin_pct": "54.37161863177832599509420184",
+      "negative_margin_orders": 491
+    },
+    "approved_all_dates": {
+      "orders": 24454,
+      "revenue": "16668956.49",
+      "margin": "9058427.55",
+      "margin_pct": "54.34309913421580957045260126",
+      "negative_margin_orders": 427
+    },
+    "approved_2023": {
+      "orders": 23388,
+      "revenue": "15966340.87",
+      "margin": "8675612.00",
+      "margin_pct": "54.33688326359776634281515249",
+      "negative_margin_orders": 414
+    }
+  },
+  "policy": "Valores e colunas validos preservados; apenas truncamentos confirmados em quarentena. Flags nao corrigem datas nem removem registros."
+}

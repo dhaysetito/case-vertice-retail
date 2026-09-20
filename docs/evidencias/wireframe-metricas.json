@@ -1,0 +1,67 @@
+{
+  "source": "Case solution\\data_work\\20260919T231914609851Z\\vendas.csv",
+  "population": "Aprovado; medidas completas",
+  "method": "Receita=sum(receita_liquida); margem=sum(receita_liquida-custo_produto-custo_frete); taxas=razao de somas",
+  "periods": {
+    "2023": {
+      "start_inclusive": "2023-01-01",
+      "end_exclusive": "2024-01-01",
+      "groups": {
+        "Todos": {
+          "receita": 15966340.87,
+          "margem": 8675612.0,
+          "margem_pct": 54.33688326359778,
+          "pedidos": 23388,
+          "ticket_medio": 682.672347785189
+        },
+        "Marketplace": {
+          "receita": 3382992.2,
+          "margem": 1742878.65,
+          "margem_pct": 51.51884920101204,
+          "pedidos": 5075,
+          "ticket_medio": 666.5994482758621
+        }
+      }
+    },
+    "novembro": {
+      "start_inclusive": "2023-11-01",
+      "end_exclusive": "2023-12-01",
+      "groups": {
+        "Todos": {
+          "receita": 2401459.88,
+          "margem": 1277841.73,
+          "margem_pct": 53.211038029084214,
+          "pedidos": 3641,
+          "ticket_medio": 659.5605273276572
+        },
+        "Marketplace": {
+          "receita": 509879.49,
+          "margem": 260051.85,
+          "margem_pct": 51.00261044036111,
+          "pedidos": 795,
+          "ticket_medio": 641.3578490566038
+        }
+      }
+    },
+    "dezembro": {
+      "start_inclusive": "2023-12-01",
+      "end_exclusive": "2024-01-01",
+      "groups": {
+        "Todos": {
+          "receita": 1979978.33,
+          "margem": 1086374.1,
+          "margem_pct": 54.86797928742988,
+          "pedidos": 2880,
+          "ticket_medio": 687.4924756944445
+        },
+        "Marketplace": {
+          "receita": 450846.24,
+          "margem": 236415.36,
+          "margem_pct": 52.43813500585033,
+          "pedidos": 625,
+          "ticket_medio": 721.353984
+        }
+      }
+    }
+  }
+}

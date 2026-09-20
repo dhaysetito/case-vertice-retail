@@ -1,0 +1,47 @@
+{
+    "created_utc":  "20260919T231914609851Z",
+    "files":  [
+                  {
+                      "source":  "Case solution\\Data\\vendas.csv",
+                      "backup":  "backups\\20260919T231914609851Z\\projeto_Data\\vendas.csv",
+                      "bytes":  5226496,
+                      "sha256":  "0199d2f3e06067985a658ab51e50568867ae2df97f65c98d1954ce3a9151cc62",
+                      "verified":  true,
+                      "working_copy":  "data_work\\20260919T231914609851Z\\vendas.csv"
+                  },
+                  {
+                      "source":  "Case solution\\Data\\clientes.csv",
+                      "backup":  "backups\\20260919T231914609851Z\\projeto_Data\\clientes.csv",
+                      "bytes":  1683441,
+                      "sha256":  "5fa93aeaaa68c31d2cb8ac1ef159167b10d7bbcd032b2814d10151fa5e36a8eb",
+                      "verified":  true,
+                      "working_copy":  "data_work\\20260919T231914609851Z\\clientes.csv"
+                  },
+                  {
+                      "source":  "Case solution\\Data\\estoque.csv",
+                      "backup":  "backups\\20260919T231914609851Z\\projeto_Data\\estoque.csv",
+                      "bytes":  637612,
+                      "sha256":  "d41b4de73bb3d85b14baca4e2d87053b377fb5e09d72f2013d2dbbc32f198b34",
+                      "verified":  true,
+                      "working_copy":  "data_work\\20260919T231914609851Z\\estoque.csv"
+                  },
+                  {
+                      "source":  "Case solution\\Data\\marketing.csv",
+                      "backup":  "backups\\20260919T231914609851Z\\projeto_Data\\marketing.csv",
+                      "bytes":  505395,
+                      "sha256":  "45d7e7ff44967d3d2985f3d9c1dfb4e378416b70817ab595349aa410d5f60cce",
+                      "verified":  true,
+                      "working_copy":  "data_work\\20260919T231914609851Z\\marketing.csv"
+                  },
+                  {
+                      "source":  "Case solution\\Data\\atendimento.csv",
+                      "backup":  "backups\\20260919T231914609851Z\\projeto_Data\\atendimento.csv",
+                      "bytes":  6324663,
+                      "sha256":  "a61a52929e72a706b922267315b26affa594e73fa233ae94c93a151f72cdfaab",
+                      "verified":  true,
+                      "working_copy":  "data_work\\20260919T231914609851Z\\atendimento.csv"
+                  }
+              ],
+    "working_copy":  "data_work\\20260919T231914609851Z",
+    "cleaning_applied":  false
+}

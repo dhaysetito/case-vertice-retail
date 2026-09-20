@@ -1,0 +1,248 @@
+{
+  "source_manifest": "backup-manifest.json",
+  "datasets": {
+    "vendas": {
+      "rows": 27759,
+      "columns": [
+        "order_id",
+        "customer_id",
+        "sku_id",
+        "data_pedido",
+        "canal",
+        "categoria",
+        "produto",
+        "quantidade",
+        "preco_unitario",
+        "receita_bruta",
+        "desconto_reais",
+        "receita_liquida",
+        "custo_produto",
+        "custo_frete",
+        "metodo_pagamento",
+        "status_pagamento",
+        "margem_contribuicao",
+        "tempo_entrega_real",
+        "devolvido",
+        "motivo_devolucao"
+      ],
+      "nulls": {
+        "quantidade": 1,
+        "preco_unitario": 1,
+        "receita_bruta": 1,
+        "desconto_reais": 1,
+        "receita_liquida": 1,
+        "custo_produto": 1,
+        "custo_frete": 1,
+        "metodo_pagamento": 1,
+        "status_pagamento": 1,
+        "margem_contribuicao": 1,
+        "tempo_entrega_real": 1,
+        "devolvido": 1,
+        "motivo_devolucao": 1
+      },
+      "duplicate_keys": 0,
+      "duplicate_rows": 0,
+      "dates": {
+        "data_pedido": {
+          "min": "2023-01-01 00:05:25",
+          "max": "2024-01-26 11:19:29",
+          "invalid_nonempty": 0
+        }
+      }
+    },
+    "clientes": {
+      "rows": 15000,
+      "columns": [
+        "customer_id",
+        "nome_completo",
+        "data_nascimento",
+        "genero",
+        "estado",
+        "cidade",
+        "nivel_fidelidade",
+        "data_cadastro",
+        "opt_in_newsletter",
+        "dispositivo_principal",
+        "renda_estimada",
+        "total_pedidos_historico",
+        "ltv_acumulado",
+        "segmento_rfm"
+      ],
+      "nulls": {},
+      "duplicate_keys": 0,
+      "duplicate_rows": 0,
+      "dates": {
+        "data_nascimento": {
+          "min": "1985-01-01 00:00:00",
+          "max": "2006-12-27 00:00:00",
+          "invalid_nonempty": 0
+        },
+        "data_cadastro": {
+          "min": "2020-01-01 00:00:00",
+          "max": "2025-12-28 00:00:00",
+          "invalid_nonempty": 0
+        }
+      }
+    },
+    "estoque": {
+      "rows": 5000,
+      "columns": [
+        "sku_id",
+        "nome_produto",
+        "categoria",
+        "subcategoria",
+        "fornecedor_id",
+        "lead_time_reposicao",
+        "custo_unitario",
+        "preco_venda_sugerido",
+        "estoque_fisico",
+        "estoque_reservado",
+        "estoque_disponivel",
+        "ponto_pedido",
+        "data_ultima_entrada",
+        "status_disponibilidade",
+        "shelf_life_dias",
+        "volume_m3"
+      ],
+      "nulls": {},
+      "duplicate_keys": 0,
+      "duplicate_rows": 0,
+      "dates": {
+        "data_ultima_entrada": {
+          "min": "2023-01-01 00:00:00",
+          "max": "2025-12-28 00:00:00",
+          "invalid_nonempty": 0
+        }
+      }
+    },
+    "marketing": {
+      "rows": 3500,
+      "columns": [
+        "campanha_id",
+        "nome_campanha",
+        "canal",
+        "categoria_foco",
+        "data_inicio",
+        "data_fim",
+        "investimento_reais",
+        "impressoes",
+        "cliques",
+        "conversoes",
+        "atribuicao",
+        "status",
+        "roas",
+        "receita_gerada",
+        "cac"
+      ],
+      "nulls": {},
+      "duplicate_keys": 0,
+      "duplicate_rows": 0,
+      "dates": {
+        "data_inicio": {
+          "min": "2023-01-01 00:00:00",
+          "max": "2025-12-28 00:00:00",
+          "invalid_nonempty": 0
+        },
+        "data_fim": {
+          "min": "2023-01-16 00:00:00",
+          "max": "2025-12-31 00:00:00",
+          "invalid_nonempty": 0
+        }
+      }
+    },
+    "atendimento": {
+      "rows": 35841,
+      "columns": [
+        "ticket_id",
+        "customer_id",
+        "order_id",
+        "data_abertura",
+        "data_fechamento",
+        "canal_entrada",
+        "categoria_problema",
+        "status_atendimento",
+        "texto_cliente",
+        "nota_csat",
+        "tempo_primeira_resposta_minutos",
+        "custo_operacional_ticket"
+      ],
+      "nulls": {
+        "customer_id": 1,
+        "order_id": 1,
+        "data_abertura": 1,
+        "data_fechamento": 1,
+        "canal_entrada": 1,
+        "categoria_problema": 1,
+        "status_atendimento": 1,
+        "texto_cliente": 1,
+        "nota_csat": 1,
+        "tempo_primeira_resposta_minutos": 1,
+        "custo_operacional_ticket": 1
+      },
+      "duplicate_keys": 0,
+      "duplicate_rows": 0,
+      "dates": {
+        "data_abertura": {
+          "min": "2023-01-01 07:54:47",
+          "max": "2025-12-31 21:11:32",
+          "invalid_nonempty": 0
+        },
+        "data_fechamento": {
+          "min": "2023-01-01 17:54:05",
+          "max": "2025-12-31 23:59:00",
+          "invalid_nonempty": 0
+        }
+      }
+    }
+  },
+  "relationships": {
+    "sales_valid_rows": 27758,
+    "tickets_valid_rows": 35840,
+    "sales_customers": 346,
+    "ticket_customers": 445,
+    "ticket_order_unmatched": 23436,
+    "tickets_matched": 12404,
+    "ticket_before_order": 1688,
+    "sale_before_customer_registration": 8464,
+    "ticket_customer_mismatch": 0,
+    "sentinel_closure": 8974,
+    "sales_unknown_sku": 0,
+    "sales_unknown_customer": 0
+  },
+  "sales_populations": {
+    "all_complete": {
+      "rows": 27758,
+      "customers": 346,
+      "revenue": 18889334.009999998,
+      "margin": 10270436.649999999,
+      "margin_pct": 0.5437161863177833,
+      "marketplace_revenue": 3986568.87,
+      "marketplace_margin": 2050034.23,
+      "marketplace_margin_pct": 0.5142352476153259,
+      "negative_margin_orders": 491
+    },
+    "approved": {
+      "rows": 24454,
+      "customers": 331,
+      "revenue": 16668956.49,
+      "margin": 9058427.55,
+      "margin_pct": 0.5434309913421581,
+      "marketplace_revenue": 3527694.64,
+      "marketplace_margin": 1816773.02,
+      "marketplace_margin_pct": 0.5150029141978116,
+      "negative_margin_orders": 427
+    }
+  },
+  "checks": {
+    "margin_identity_errors_gt_0011": 0,
+    "stock_identity_errors": 0,
+    "stock_zero_or_negative": 99,
+    "stock_below_or_at_reorder": 800,
+    "ticket_cost_values": [
+      2.0,
+      15.0,
+      45.0
+    ],
+    "marketing_campaigns_contained_in_sales_window": 853
+  }
+}
