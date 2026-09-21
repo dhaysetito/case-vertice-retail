@@ -29,3 +29,95 @@
 .category-bars{display:grid;gap:12px;padding:5px 0 3px}.category-bar-row{display:grid;grid-template-columns:76px minmax(90px,1fr) 68px;align-items:center;gap:10px;width:100%;padding:3px 0;text-align:left;transition:opacity .15s}.category-bar-label{overflow:hidden;text-overflow:ellipsis;color:#657389;font-size:10px;white-space:nowrap}.category-bar-track{display:block;height:10px;background:#eef2f6;border-radius:6px;overflow:hidden}.category-bar-fill{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#168f88,#4bb8ac);transition:width .25s}.category-bar-row strong{text-align:right;color:#405168;font-size:10px;font-weight:650}.category-bar-row:hover .category-bar-fill{filter:brightness(.92)}.category-bar-row:hover .category-bar-label{color:#168f88}.category-bar-row.muted{opacity:.42}.category-bar-row.selected .category-bar-label,.category-bar-row.selected strong{color:#137b74;font-weight:700}.category-bar-row.selected .category-bar-track{box-shadow:0 0 0 2px #bfe5df}
 @media(min-width:1100px){body[data-section="saude"] .grid-main{grid-template-columns:minmax(420px,.9fr) minmax(0,1.1fr)}}
 .alert-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.alert-summary>div{background:#fff;border:1px solid var(--line);border-radius:9px;padding:15px 17px}.alert-summary span{display:block;font-size:9px;letter-spacing:.8px;color:#8793a4}.alert-summary strong{display:block;font-size:19px;margin-top:5px;color:#30445b}.alert-list{display:grid;gap:10px}.alert-card{display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:12px;width:100%;text-align:left;border:1px solid #e6ebf2;border-radius:8px;padding:13px 14px;transition:background .15s,border-color .15s}.alert-card:hover{background:#f8fbfc;border-color:#b9dcd8}.alert-priority{min-width:64px;text-align:center;border-radius:4px;padding:3px 6px;font-size:9px;font-weight:650;background:#fff4dc;color:#a47c2d}.alert-card.alta .alert-priority{background:#f0edfb;color:#705ec2}.alert-card.crítica .alert-priority{background:#f9ebeb;color:#b55d5d}.alert-card h3{font-size:12px;margin:0 0 3px}.alert-card p{margin:0;font-size:10px;line-height:1.6}.alert-card small{display:block;color:#8a97a7;font-size:9px;margin-top:5px}.alert-card .arrow{align-self:center;color:var(--teal);font-size:17px}@media(max-width:600px){.alert-summary{grid-template-columns:1fr}.alert-card{grid-template-columns:1fr auto}.alert-priority{width:max-content}.alert-card>div{grid-column:1/-1;grid-row:2}.alert-card .arrow{grid-column:2;grid-row:1}}
+
+/* Investigacao com IA. `.ai-tabs` ja era usado pelo dashboard sem estilo proprio. */
+.ai-status{margin:-4px 0 14px}
+.ai-tabs{display:flex;gap:6px;margin:0 0 16px;flex-wrap:wrap}
+.ai-tabs button{font-size:10px;padding:6px 11px;border-radius:6px;background:#f3f6fa;color:#8894a5;font-weight:600}
+.ai-tabs button:hover{background:#e9eef5;color:#6b7b90}
+.ai-tabs button.active{background:#e6f3f0;color:var(--teal)}
+.ai-label{font-size:9px;letter-spacing:1.2px;color:#8a94a4;font-weight:600;margin:18px 0 9px;text-transform:uppercase}
+.ai-suggestions{display:grid;gap:8px}
+.ai-chip{display:block;width:100%;text-align:left;border:1px solid #e7ecf4;border-radius:8px;padding:11px 13px;background:white;transition:background .15s,border-color .15s}
+.ai-chip:hover{background:#f7fafc;border-color:#d8e2ee}
+.ai-chip b{display:block;font-size:11px;color:var(--ink);margin-bottom:3px}
+.ai-chip span{display:block;font-size:10px;color:var(--muted);line-height:1.6}
+textarea#ai-question{width:100%;border:1px solid #e0e6ee;border-radius:8px;padding:11px 12px;font:inherit;font-size:12px;color:var(--ink);resize:vertical;background:white}
+textarea#ai-question:focus-visible{outline:3px solid #9384ec;outline-offset:2px;border-color:#cdd6e3}
+textarea#ai-question:disabled{background:#f7f9fc;color:#9aa5b5}
+.ai-ask-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.ai-ask-actions small{font-size:9px;color:#9ba5b4;line-height:1.5}
+.ai-loading{background:#f5f8fb;border-radius:8px;padding:18px 15px;margin-top:18px;font-size:11px;color:#6d7d92}
+.ai-error{background:#fff9ee;border:1px solid #f3e8d0;border-radius:8px;padding:15px;margin-top:18px}
+.ai-error b{font-size:11px;color:#8d6f34}
+.ai-error p{font-size:10px;margin:6px 0 0}
+.ai-answer{border-top:1px solid var(--line);margin-top:20px;padding-top:16px}
+.ai-answer-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px}
+.ai-answer-head small{font-size:9px;color:#9ba5b4}
+.ai-heading{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--teal);margin:18px 0 2px;font-weight:700}
+.ai-heading:first-child{margin-top:8px}
+.ai-answer p{font-size:12px;line-height:1.85}
+.ai-list{margin:6px 0;padding-left:18px}
+.ai-list li{font-size:12px;line-height:1.8;color:var(--muted);margin-bottom:4px}
+.ai-answer strong{color:var(--ink);font-weight:650}
+.ai-answer table{margin:10px 0;font-size:11px}
+.ai-answer td{padding:8px}
+@media(max-width:600px){.ai-ask-actions{flex-direction:column;align-items:stretch}.ai-ask-actions .primary{width:100%}}
+.ai-answer.offline{border-top-color:#f0e3c8}
+.ai-answer.offline .ai-heading{color:#a88337}
+.ai-callout{background:#fff9ee;border-left:3px solid #e0cda0;border-radius:0 6px 6px 0;padding:10px 13px;margin:12px 0;font-size:11px;color:#8d7541}
+
+/* Frentes de negocio na Saude do negocio. Mesma linguagem dos chips de IA. */
+.fronts[hidden]{display:none}
+.fronts{display:flex;align-items:center;gap:16px;margin:0 0 18px;flex-wrap:wrap}
+.fronts-label{font-size:9px;letter-spacing:1.5px;color:#8a94a4;font-weight:600;white-space:nowrap}
+.fronts-tabs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px;min-width:0}
+.front-chip{font-size:11px;font-weight:600;padding:8px 15px;border-radius:7px;background:white;border:1px solid var(--line);color:#7a8597;white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.front-chip:hover{background:#f7fafc;border-color:#d8e2ee;color:#5d6d82}
+.front-chip.active{background:#e6f3f0;border-color:#c5e3db;color:var(--teal)}
+.kpis-front{grid-template-columns:repeat(5,minmax(0,1fr))}
+.kpi-off{opacity:.62}
+.kpi-off strong{color:#9aa5b5}
+.kpi-blocked{color:#a88337}
+.cell-empty{color:#b3bcc9}
+@media(max-width:1150px){.fronts{gap:10px}.front-chip{padding:7px 12px}}
+@media(max-width:900px){.fronts{flex-direction:column;align-items:flex-start;gap:8px}.fronts-tabs{width:100%}.kpis-front{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.kpis-front{grid-template-columns:repeat(2,1fr)}}
+
+/* Alertas: quatro parametros no resumo e a faixa informativa de qualidade. */
+.alert-summary{grid-template-columns:repeat(4,minmax(0,1fr))}
+.alert-card.informativa .alert-priority{background:#e7f5f1;color:#238874}
+.alert-card small{display:block;margin-top:6px;font-size:9px;color:#94a0b1}
+.alert-card small .pill{margin-left:6px;vertical-align:baseline}
+@media(max-width:900px){.alert-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.alert-summary{grid-template-columns:1fr}}
+
+/* Relatorio executivo: documento na tela e folha de impressao para o PDF. */
+.report-doc{background:white;border:1px solid var(--line);border-radius:10px;padding:30px 34px}
+.report-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:20px;flex-wrap:wrap}
+.report-head h2{font-size:20px;letter-spacing:-.4px;margin:6px 0 4px}
+.report-head p{font-size:11px}
+.report-meta{display:grid;gap:9px;text-align:right}
+.report-meta span{display:block;font-size:8px;letter-spacing:1.1px;color:#9ba5b4}
+.report-meta b{font-size:11px;color:#46556c;font-weight:600}
+.report-block{margin-top:24px}
+.report-block h3{font-size:14px;margin:4px 0 12px}
+.report-block .cell-empty{font-size:10px}
+.report-foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font-size:9px;color:#9ba5b4;line-height:1.7}
+.report-doc .up{color:#248b71}
+.report-doc .down{color:#b56c59}
+
+@media print{
+ /* Só o documento vai para o papel: nada de menu, filtros ou controles. */
+ .sidebar,.topbar,.filterbar,.fronts,.page-heading,.section-intro,dialog{display:none!important}
+ footer:not(.report-foot){display:none!important}
+ .app{margin:0}
+ main{padding:0;max-width:none}
+ body{background:white}
+ .report-doc{border:0;border-radius:0;padding:0}
+ .report-block{break-inside:avoid;page-break-inside:avoid}
+ table{font-size:10px}
+ th{padding-bottom:8px}
+ td{padding:8px 8px}
+ a[href]::after{content:''}
+}
