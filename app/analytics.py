@@ -15,6 +15,20 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 
+MONTHS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
+          "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+
+# Vereditos preservados do estudo (docs/01-escopo.md). Não são recalculados aqui:
+# entram no contexto da IA para que ela não reabra uma hipótese já concluída.
+HYPOTHESES = [
+    {"id": "H01", "verdict": "Refutada",
+     "statement": "a associação entre desconto e margem por venda não confirma deterioração agregada causada por descontos"},
+    {"id": "H02", "verdict": "Validada",
+     "statement": "Marketplace combina escala com menor margem percentual, mas também lidera margem absoluta"},
+    {"id": "H07", "verdict": "Validada com ressalva",
+     "statement": "há concentração de volume e custo de tickets; IDs, cobertura temporal e provável sentinela limitam a investigação de causas"},
+]
+
 
 def _current_snapshot() -> Path:
     pointer = json.loads((ROOT / "data_processed/current.json").read_text(encoding="utf-8"))
@@ -23,6 +37,12 @@ def _current_snapshot() -> Path:
     if not target.is_relative_to(processed):
         raise ValueError("snapshot fora de data_processed")
     return target
+
+
+def _br(value: float, sinal: bool = False) -> str:
+    """Número no formato brasileiro; a pergunta é lida por uma pessoa."""
+    texto = f"{value:+.2f}" if sinal else f"{value:.2f}"
+    return texto.replace(".", ",")
 
 
 def _decimal(value: str | int | float) -> Decimal:
@@ -175,6 +195,143 @@ class Analytics:
         return {"type": "descriptive", "context": self.context(query), "benchmark_margin_pct": benchmark["margin_pct"],
                 "gap_margin_pp": aggregate["margin_pct"] - benchmark["margin_pct"] if aggregate["margin_pct"] is not None and benchmark["margin_pct"] is not None else None,
                 "limitations": ["margem disponível não inclui comissões, impostos e outros custos econômicos", "gap diagnóstico não é saving", "observação não demonstra causalidade"]}
+
+    def scope_label(self, query: Query) -> str:
+        """Rótulo lido por uma pessoa: aparece na tela e na resposta da IA."""
+        if query.start and query.end:
+            start, end = date.fromisoformat(query.start), date.fromisoformat(query.end)
+            if (start, end) == (date(query.year, 1, 1), date(query.year + 1, 1, 1)):
+                period = f"{query.year} completo"
+            elif start.day == 1 and end == (date(start.year + 1, 1, 1) if start.month == 12
+                                            else date(start.year, start.month + 1, 1)):
+                period = f"{MONTHS[start.month - 1]} de {start.year}"
+            else:
+                period = f"{start.strftime('%d/%m/%Y')} a {(end - timedelta(days=1)).strftime('%d/%m/%Y')}"
+        elif query.month:
+            period = f"{MONTHS[query.month - 1]} de {query.year}"
+        else:
+            period = f"{query.year} completo"
+        return (f"{period} · {query.channel or 'todos os canais'} · "
+                f"{query.category or 'todas as categorias'}")
+
+    def calendar_month(self, query: Query) -> int | None:
+        """Mês do calendário que o recorte representa, venha de `month` ou de `start`/`end`.
+
+        A interface manda sempre `start`/`end`; sem esta normalização, novembro
+        virava uma janela de 30 dias e o período anterior caía em 02/10, em vez
+        de outubro inteiro. Persistência e comparação dependem disso.
+        """
+        if query.month:
+            return query.month
+        if not (query.start and query.end):
+            return None
+        start, end = date.fromisoformat(query.start), date.fromisoformat(query.end)
+        if start.day != 1:
+            return None
+        seguinte = date(start.year + 1, 1, 1) if start.month == 12 else date(start.year, start.month + 1, 1)
+        return start.month if end == seguinte else None
+
+    def _previous_query(self, query: Query) -> tuple[Query, str] | None:
+        """Janela anterior comparável, ou None quando não existe base no recorte."""
+        month = self.calendar_month(query)
+        if month is not None:
+            if month == 1:
+                return None
+            return (Query(query.year, month - 1, query.channel, query.category, query.grain),
+                    f"{MONTHS[month - 2]} de {query.year}")
+        if query.start and query.end:
+            start, end = date.fromisoformat(query.start), date.fromisoformat(query.end)
+            span = end - start
+            previous_start = start - span
+            if previous_start.year != query.year:
+                return None
+            return (Query(query.year, None, query.channel, query.category, query.grain,
+                          previous_start.isoformat(), start.isoformat()),
+                    f"{previous_start.isoformat()} a {start.isoformat()}")
+        if query.month and query.month > 1:
+            return (Query(query.year, query.month - 1, query.channel, query.category, query.grain),
+                    f"{MONTHS[query.month - 2]} de {query.year}")
+        return None
+
+    def investigation_context(self, query: Query = Query()) -> dict[str, Any]:
+        """Pacote completo que aterra a IA.
+
+        A IA não consulta dados por conta própria — o gateway em uso descarta
+        ferramentas do cliente (ver app/ai.py). Por isso o recorte vai inteiro:
+        totais, período anterior, todos os canais, todas as categorias e os doze
+        meses. Assim uma pergunta sobre outro mês ou canal tem resposta sem
+        exigir que o gestor mude o filtro antes.
+        """
+        totals = self._aggregate(self._rows(query))
+        previous = None
+        pair = self._previous_query(query)
+        if pair:
+            previous_query, label = pair
+            # Canais e categorias do período anterior também entram: sem eles a IA
+            # consegue dizer que a margem caiu, mas não quais cortes acompanham a queda.
+            previous = {"label": label, **self._aggregate(self._rows(previous_query)),
+                        "channels": self.channels(previous_query)["items"],
+                        "categories": self.categories(previous_query)["items"]}
+        annual = Query(query.year, None, query.channel, query.category, query.grain)
+        trend = [{"month": month,
+                  **self._aggregate(self._rows(Query(query.year, month, query.channel, query.category, query.grain)))}
+                 for month in range(1, 13)]
+        return {
+            "scope": {"snapshot": self.version, "population": "Aprovado; medidas completas",
+                      "label": self.scope_label(query), "year": query.year, "month": query.month,
+                      "channel": query.channel, "category": query.category, "grain": query.grain,
+                      "start": query.start, "end": query.end},
+            "totals": totals,
+            "previous": previous,
+            "channels": self.channels(query)["items"],
+            "categories": self.categories(query)["items"],
+            "trend": trend,
+            "evidence": self.evidence(query),
+            "hypotheses": HYPOTHESES,
+            "annual_orders": self._aggregate(self._rows(annual))["orders"],
+        }
+
+    def suggestions(self, query: Query = Query()) -> list[dict[str, str]]:
+        """Hipóteses sugeridas, derivadas do recorte — nunca uma lista fixa.
+
+        São perguntas, não conclusões: o texto sempre nomeia o valor observado e
+        deixa a causa em aberto, porque a camada analítica é descritiva.
+        """
+        items: list[dict[str, str]] = []
+        channels = [item for item in self.channels(query)["items"] if item["margin_pct"] is not None]
+        if channels:
+            worst = min(channels, key=lambda item: item["margin_pct"])
+            benchmark = self.evidence(query)["benchmark_margin_pct"]
+            if benchmark is not None:
+                items.append({"id": "canal_margem", "label": f"Margem de {worst['channel']}",
+                              "question": f"A margem de {worst['channel']} é {_br(worst['margin_pct'])}% contra "
+                                          f"{_br(benchmark)}% do consolidado. O que os dados deste recorte mostram "
+                                          f"sobre essa diferença?"})
+        categories = [item for item in self.categories(query)["items"] if item["margin_pct"] is not None]
+        if categories:
+            worst = min(categories, key=lambda item: item["margin_pct"])
+            items.append({"id": "categoria_margem", "label": f"Categoria {worst['category']}",
+                          "question": f"{worst['category']} tem a menor margem percentual do recorte "
+                                      f"({_br(worst['margin_pct'])}%). Como ela se compara às demais em receita, "
+                                      f"pedidos e ticket médio?"})
+        pair = self._previous_query(query)
+        if pair:
+            previous_query, label = pair
+            previous = self._aggregate(self._rows(previous_query))
+            current = self._aggregate(self._rows(query))
+            if previous["margin_pct"] is not None and current["margin_pct"] is not None:
+                delta = current["margin_pct"] - previous["margin_pct"]
+                items.append({"id": "variacao_periodo", "label": f"Variação contra {label}",
+                              "question": f"A margem percentual variou {_br(delta, sinal=True)} p.p. contra {label}. "
+                                          f"Quais canais e categorias acompanham essa variação?"})
+        else:
+            items.append({"id": "sazonalidade", "label": "Meses extremos de 2023",
+                          "question": "Quais meses de 2023 tiveram a maior e a menor margem percentual neste "
+                                      "recorte, e o que mais muda entre eles?"})
+        items.append({"id": "mix", "label": "Concentração de receita",
+                      "question": "Qual a concentração de receita por canal e por categoria neste recorte, e o que "
+                                  "isso significa para a leitura da margem consolidada?"})
+        return items
 
 
 def query_from_params(params: dict[str, str]) -> Query:

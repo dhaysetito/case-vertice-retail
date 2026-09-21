@@ -37,6 +37,18 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def local(root, recorded):
+    """Resolve um caminho gravado no manifesto, venha ele de Windows ou Unix.
+
+    Manifestos gerados no Windows guardam `a\\b\\c`; em Linux a barra invertida
+    e caractere de nome de arquivo, nao separador, e o caminho nao resolve.
+    Normalizar na LEITURA e proposital: reescrever os manifestos mudaria o
+    conteudo de um snapshot declarado imutavel, e publish() acusaria adulteracao.
+    Escrita nova sai em POSIX; ver auditar_fontes.py.
+    """
+    return root.joinpath(*str(recorded).replace('\\', '/').split('/'))
+
+
 def decimal(value):
     try:
         result = Decimal(value)
@@ -181,7 +193,8 @@ def json_text(value):
 
 def verify_sources(root, manifest):
     for record in manifest['files']:
-        for path in [root.parent / record['source'], root / record['backup'], root / record['working_copy']]:
+        for path in [local(root.parent, record['source']), local(root, record['backup']),
+                     local(root, record['working_copy'])]:
             require(sha(path) == record['sha256'], f'Hash alterado: {path}')
 
 
@@ -207,12 +220,12 @@ def main():
     manifest = json.loads((ROOT / 'docs/evidencias/backup-manifest.json').read_text(encoding='utf-8-sig'))
     profile = json.loads((ROOT / 'docs/evidencias/perfil-dados.json').read_text(encoding='utf-8'))
     verify_sources(ROOT, manifest)
-    sources = {Path(r['working_copy']).stem: r for r in manifest['files']}
+    sources = {local(ROOT, r['working_copy']).stem: r for r in manifest['files']}
     signature = json_text({'version': VERSION, 'sources': {k: v['sha256'] for k, v in sorted(sources.items())}})
     snapshot = VERSION + '-' + hashlib.sha256(signature.encode()).hexdigest()[:12]
     schemas, tables, quarantine = {}, {}, []
     for name in KEYS:
-        schema, records, rejected = read_dataset(ROOT / sources[name]['working_copy'], name, profile['datasets'][name]['columns'])
+        schema, records, rejected = read_dataset(local(ROOT, sources[name]['working_copy']), name, profile['datasets'][name]['columns'])
         schemas[name], tables[name] = schema, records
         for row in rejected:
             row['source_sha256'] = sources[name]['sha256']

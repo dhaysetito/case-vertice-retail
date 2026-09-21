@@ -65,11 +65,11 @@ class CleaningSafetyTests(unittest.TestCase):
         backup = json.loads((ROOT / 'docs/evidencias/backup-manifest.json').read_text(encoding='utf-8-sig'))
         current = json.loads((ROOT / 'data_processed/current.json').read_text(encoding='utf-8'))
         for entry in backup['files']:
-            name = Path(entry['working_copy']).stem
-            with (ROOT / entry['working_copy']).open(encoding='utf-8-sig', newline='') as handle:
+            name = p.local(ROOT, entry['working_copy']).stem
+            with p.local(ROOT, entry['working_copy']).open(encoding='utf-8-sig', newline='') as handle:
                 reader = csv.reader(handle); header = next(reader)
                 original = [r for r in reader if not p.known_truncation(name, r, len(header))]
-            with (ROOT / current['path'] / (name + '.csv')).open(encoding='utf-8-sig', newline='') as handle:
+            with p.local(ROOT, current['path'] + '/' + name + '.csv').open(encoding='utf-8-sig', newline='') as handle:
                 reader = csv.reader(handle)
                 self.assertEqual(next(reader), header)
                 self.assertEqual(list(reader), original, name)

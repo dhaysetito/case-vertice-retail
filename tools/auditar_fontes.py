@@ -22,7 +22,9 @@ def main():
     docs = ROOT / 'docs' / 'evidencias'
     docs.mkdir(parents=True, exist_ok=True)
     sources = {'projeto_Data': ROOT / 'Data'}
-    manifest = {'created_utc': stamp, 'files': [], 'working_copy': str(working.relative_to(ROOT)),
+    # as_posix(): str() usaria o separador do sistema e o manifesto so resolveria
+    # na plataforma que o gerou. Ja aconteceu; ver docs/17-portabilidade-de-caminhos.md.
+    manifest = {'created_utc': stamp, 'files': [], 'working_copy': working.relative_to(ROOT).as_posix(),
                 'cleaning_applied': False}
     for label, folder in sources.items():
         for name in NAMES:
@@ -33,8 +35,8 @@ def main():
             with source.open('rb') as src, target.open('xb') as dst:
                 shutil.copyfileobj(src, dst)
             assert sha(target) == before == sha(source), source
-            record = {'source': str(source.relative_to(ROOT.parent)),
-                      'backup': str(target.relative_to(ROOT)), 'bytes': source.stat().st_size,
+            record = {'source': source.relative_to(ROOT.parent).as_posix(),
+                      'backup': target.relative_to(ROOT).as_posix(), 'bytes': source.stat().st_size,
                       'sha256': before, 'verified': True}
             if label == 'projeto_Data':
                 working.mkdir(parents=True, exist_ok=True)
@@ -42,7 +44,7 @@ def main():
                 with source.open('rb') as src, copy.open('xb') as dst:
                     shutil.copyfileobj(src, dst)
                 assert sha(copy) == before
-                record['working_copy'] = str(copy.relative_to(ROOT))
+                record['working_copy'] = copy.relative_to(ROOT).as_posix()
             manifest['files'].append(record)
     serialized = json.dumps(manifest, indent=2, ensure_ascii=False)
     (docs / 'backup-manifest.json').write_text(serialized, encoding='utf-8')
@@ -98,7 +100,7 @@ def main():
     (docs / 'perfil-dados.json').write_text(json.dumps(profile, indent=2, ensure_ascii=False), encoding='utf-8')
     for row in manifest['files']:
         assert sha(ROOT.parent / row['source']) == row['sha256']
-    print(json.dumps({'backup': str(backup.relative_to(ROOT)), 'working':str(working.relative_to(ROOT)),
+    print(json.dumps({'backup': backup.relative_to(ROOT).as_posix(), 'working': working.relative_to(ROOT).as_posix(),
                       'backup_files': len(manifest['files']),
                       'relationships':profile['relationships'],'populations':profile['sales_populations'],
                       'checks':profile['checks']}, indent=2, ensure_ascii=False))
